@@ -1,0 +1,21 @@
+create table customerx(custid number , custname varchar(30),salary number);
+
+create or replace trigger epmlo 
+after update or delete or insert 
+on customerx for each row 
+begin
+if updating then dbms_output.put_line('salary difference is '||to_char(:new.salary-:old.salary));
+elsif inserting then dbms_output.put_line('new record is inserted with salary '||:new.salary);
+elsif deleting then dbms_output.put_line('record deleted with salary '||:old.salary);
+end if;
+end;
+/
+declare
+begin
+insert into customerx values(1,'a',283193);
+insert into customerx values(3,'b',2313);
+insert into customerx values(2,'c',10000);
+update customerx set salary = 30000 where custid = 2;
+delete from customerx where custid = 1;
+end;
+/
