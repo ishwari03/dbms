@@ -1,0 +1,55 @@
+-- Drop existing tables if they exist
+DROP TABLE library;
+DROP TABLE libraryaudit;
+
+-- Create the 'library' table
+CREATE TABLE library (
+    bookid NUMBER PRIMARY KEY,
+    bookname VARCHAR2(20)
+);
+
+-- Create the 'libraryaudit' table
+CREATE TABLE libraryaudit (
+    bookid NUMBER,
+    bookname VARCHAR2(20)
+);
+
+-- Insert records into the 'library' table
+INSERT INTO library VALUES (1, 'a');
+INSERT INTO library VALUES (2, 'b');
+INSERT INTO library VALUES (3, 'c');
+INSERT INTO library VALUES (4, 'd');
+INSERT INTO library VALUES (5, 'e');
+
+-- Display the contents of the 'library' table
+SELECT * FROM library;
+
+-- Display the contents of the 'libraryaudit' table
+SELECT * FROM libraryaudit;
+
+-- Create or replace trigger 'lib1'
+CREATE OR REPLACE TRIGGER lib1
+AFTER UPDATE OR DELETE ON library
+FOR EACH ROW
+BEGIN
+    -- Insert the old values into the 'libraryaudit' table
+    INSERT INTO libraryaudit (bookid, bookname)
+    VALUES (:OLD.bookid, :OLD.bookname);
+END;
+/
+
+-- PL/SQL Block to test the trigger
+DECLARE
+BEGIN
+    -- Update and delete operations on 'library' table
+    UPDATE library SET bookname = 'xyz' WHERE bookid = 2;
+    DELETE FROM library WHERE bookid = 1;
+    COMMIT;
+END;
+/
+
+-- Display the contents of the 'library' table after the operations
+SELECT * FROM library;
+
+-- Display the contents of the 'libraryaudit' table to verify the trigger's result
+SELECT * FROM libraryaudit;
