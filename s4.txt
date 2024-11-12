@@ -1,0 +1,142 @@
+
+SQL> create table Cust_Master( cust_no varchar2(10) primary key,
+  2  cust_name varchar2(30) not null, cust_addr varchar2(30));
+
+Table created.
+
+SQL> create table Orders(
+  2  order_no number(10) primary key,cust_no varchar2(10) not null, order_d
+ate DATE , qty_ordered number,
+  3  foreign key(cust_no) references Cust_Master (cust_no));
+
+Table created.
+
+SQL> create table Product (product_no number(10) primary key,product_name v
+archar2(20) not null, order_no number(10), foreign key (order_no
+  2  ) references Orders (order_no));
+
+Table created.
+
+SQL> INSERT INTO Cust_Master VALUES ('C1001', 'Anil', 'Banglore');
+
+1 row created.
+
+SQL> INSERT INTO Cust_Master VALUES ('C1002', 'Sunil', 'Manglore');
+
+1 row created.
+
+SQL> INSERT INTO Cust_Master VALUES ('C1003', 'Aarti', 'Delhi');
+
+1 row created.
+
+SQL> INSERT INTO Cust_Master VALUES ('C1004', 'Seema', 'Mumbai');
+
+1 row created.
+
+SQL> INSERT INTO Cust_Master VALUES ('C1005', 'Arjun', 'Banglore');
+
+1 row created.
+
+INSERT INTO Orders VALUES (2001, 'C1001', TO_DATE('2023-09-10', 'YYYY-MM-DD'), 10);
+INSERT INTO Orders VALUES (2002, 'C1002', TO_DATE('2023-09-12', 'YYYY-MM-DD'), 5);
+INSERT INTO Orders VALUES (2003, 'C1002', TO_DATE('2023-09-09', 'YYYY-MM-DD'), 12);
+INSERT INTO Orders VALUES (2004, 'C1005', TO_DATE('2023-09-15', 'YYYY-MM-DD'), 6);
+
+INSERT INTO Product VALUES (3001, 'Laptop', 2001);
+INSERT INTO Product VALUES (3002, 'Keyboard', 2002);
+INSERT INTO Product VALUES (3003, 'Mouse', 2003);
+INSERT INTO Product VALUES (3004, 'Speaker', 2004);
+
+1)SQL> select cust_name from Cust_Master where cust_name LIKE '_a%';
+
+CUST_NAME
+------------------------------
+Aarti
+2)SQL> select * from Orders where cust_no IN('C1002','C1005','C1007','C1008')
+;
+
+  ORDER_NO CUST_NO    ORDER_DAT QTY_ORDERED
+---------- ---------- --------- -----------
+      2002 C1002      05-AUG-03           5
+      2003 C1002      09-SEP-23          12
+      2004 C1005      15-SEP-23           6
+3)SQL> select cust_name,cust_addr from Cust_Master where cust_addr IN ('Bangl
+ore','Manglore');
+
+CUST_NAME                      CUST_ADDR
+------------------------------ ------------------------------
+Anil                           Banglore
+Sunil                          Manglore
+Arjun                          Banglore
+
+4)
+SQL> select Cust_Master.cust_name, Product.product_name from Cust_Master
+  2  JOIN Orders on Cust_Master.cust_no = Orders.cust_no
+  3  JOIN Product on Product.order_no= Orders.order_no;
+
+CUST_NAME                      PRODUCT_NAME
+------------------------------ --------------------
+Anil                           Laptop
+Sunil                          Keyboard
+Sunil                          Mouse
+Arjun                          Speaker
+
+5)SQL> create view view1 as
+  2  select Cust_Master.cust_name, Product.product_name from Cust_Master
+  3  JOIN Orders on Cust_Master.cust_no = Orders.cust_no
+  4  JOIN Product on Product.order_no= Orders.order_no;
+
+View created.
+6)
+SQL> select Cust_Master.cust_name, Product.product_name, Orders.qty_ordered
+
+  2  from Cust_Master
+  3  JOIN Orders on Cust_Master.cust_no = Orders.cust_no
+  4  JOIN Product on Product.order_no= Orders.order_no;
+
+CUST_NAME                      PRODUCT_NAME         QTY_ORDERED
+------------------------------ -------------------- -----------
+Anil                           Laptop                        10
+Sunil                          Keyboard                       5
+Sunil                          Mouse                         12
+Arjun                          Speaker                        6
+
+7) inner join:
+   
+SQL> select Cust_Master.cust_name, Product.product_name from Cust_Master
+  2  JOIN Orders on Cust_Master.cust_no = Orders.cust_no
+  3  JOIN Product on Product.order_no= Orders.order_no;
+
+CUST_NAME                      PRODUCT_NAME
+------------------------------ --------------------
+Anil                           Laptop
+Sunil                          Keyboard
+Sunil                          Mouse
+Arjun                          Speaker
+
+left join:
+	
+SQL> select Cust_Master.cust_name,Product.product_name from Cust_Master
+  2  LEFT JOIN Orders on Cust_Master.cust_no=Orders.cust_no
+  3  LEFT JOIN Product on Product.order_no=Orders.order_no;
+
+CUST_NAME                      PRODUCT_NAME
+------------------------------ --------------------
+Anil                           Laptop
+Sunil                          Keyboard
+Sunil                          Mouse
+Arjun                          Speaker
+Aarti
+Seema
+
+right join:SQL> select Cust_Master.cust_name,Product.product_name from Cust_Master
+  2  RIGHT JOIN Orders on Cust_Master.cust_no=Orders.cust_no
+  3  RIGHT JOIN Product on Product.order_no=Orders.order_no;
+
+CUST_NAME                      PRODUCT_NAME
+------------------------------ --------------------
+Anil                           Laptop
+Sunil                          Keyboard
+Sunil                          Mouse
+Arjun                          Speaker
+	

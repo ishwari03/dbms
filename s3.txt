@@ -1,0 +1,34 @@
+1) SQL> select b_name,avg(balance) from Account group by b_name having avg(bala
+nce)>12000;
+
+B_NAME               AVG(BALANCE)
+-------------------- ------------
+Wadia                       15000
+
+2)SQL> select count(*) from Customer;
+
+  COUNT(*)
+----------
+         5
+3) SQL> select sum(amount) from Loan;
+
+SUM(AMOUNT)
+-----------
+      92000
+4)SQL> DELETE from Loan where amount>=1300 and amount<=1500;
+
+5)SQL> select avg(balance),b_name from Account group by b_name;
+
+AVG(BALANCE) B_NAME
+------------ --------------------
+       15000 Wadia
+        6000 sainagar
+        8000 gaurinagar
+       10000 Alison
+       12000 City Pride
+6)SQL> select c_name, c_city from Customer where c_name LIKE 'R%';
+
+C_NAME               C_CITY
+-------------------- --------------------
+Raj                  Pune
+Riya                 Mumbai

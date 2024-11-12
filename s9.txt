@@ -1,0 +1,94 @@
+
+SQL Queries for Creating Tables, Inserting Data, and Solving Queries
+
+1. Create the Tables with Constraints
+
+-- Table: CUSTOMERS
+CREATE TABLE CUSTOMERS (
+    CNo INT PRIMARY KEY,
+    Cname VARCHAR(50) NOT NULL,
+    Ccity VARCHAR(50),
+    CMobile VARCHAR(15) UNIQUE
+);
+
+-- Table: ITEMS
+CREATE TABLE ITEMS (
+    INo INT PRIMARY KEY,
+    Iname VARCHAR(50) NOT NULL,
+    Itype VARCHAR(50),
+    Iprice DECIMAL(10, 2),
+    Icount INT CHECK (Icount >= 0)
+);
+
+-- Table: PURCHASE
+CREATE TABLE PURCHASE (
+    PNo INT PRIMARY KEY,
+    Pdate DATE,
+    Pquantity INT CHECK (Pquantity > 0),
+    Cno INT,
+    INo INT,
+    FOREIGN KEY (Cno) REFERENCES CUSTOMERS(CNo),
+    FOREIGN KEY (INo) REFERENCES ITEMS(INo)
+);
+
+2. Insert Sample Data
+
+-- Insert data into CUSTOMERS
+INSERT INTO CUSTOMERS (CNo, Cname, Ccity, CMobile) VALUES (1, 'Gopal', 'Mumbai', '9876543210');
+INSERT INTO CUSTOMERS (CNo, Cname, Ccity, CMobile) VALUES (2, 'Maya', 'Pune', '9123456789');
+-- Add more sample data as needed
+
+-- Insert data into ITEMS
+INSERT INTO ITEMS (INo, Iname, Itype, Iprice, Icount) VALUES (101, 'Notebook', 'Stationary', 500, 100);
+INSERT INTO ITEMS (INo, Iname, Itype, Iprice, Icount) VALUES (102, 'Pen', 'Stationary', 800, 50);
+-- Add more sample data as needed
+
+-- Insert data into PURCHASE
+INSERT INTO PURCHASE (PNo, Pdate, Pquantity, Cno, INo) VALUES (1, '2024-11-01', 5, 1, 101);
+INSERT INTO PURCHASE (PNo, Pdate, Pquantity, Cno, INo) VALUES (2, '2024-10-15', 10, 2, 102);
+-- Add more sample data as needed
+
+3. Solve Each Query
+
+1. List all stationary items with price between 400 and 1000:
+SELECT Iname, Iprice
+FROM ITEMS
+WHERE Itype = 'Stationary' AND Iprice BETWEEN 400 AND 1000;
+
+2. Change the mobile number of customer “Gopal”:
+UPDATE CUSTOMERS
+SET CMobile = '9998887776'
+WHERE Cname = 'Gopal';
+
+3. Display the item with the maximum price:
+SELECT Iname, Iprice
+FROM ITEMS
+WHERE Iprice = (SELECT MAX(Iprice) FROM ITEMS);
+
+4. Display all purchases sorted from the most recent to the oldest:
+SELECT *
+FROM PURCHASE
+ORDER BY Pdate DESC;
+
+5. Count the number of customers in every city:
+SELECT Ccity, COUNT(*) AS CustomerCount
+FROM CUSTOMERS
+GROUP BY Ccity;
+
+6. Display all purchased quantities of Customer “Maya”:
+SELECT P.PNo, P.Pdate, P.Pquantity, I.Iname
+FROM PURCHASE P
+JOIN CUSTOMERS C ON P.Cno = C.CNo
+JOIN ITEMS I ON P.INo = I.INo
+WHERE C.Cname = 'Maya';
+
+7. Create a view to show the item name, price, and count of all stationary items in descending order of price:
+CREATE VIEW StationaryItemsView AS
+SELECT Iname, Iprice, Icount
+FROM ITEMS
+WHERE Itype = 'Stationary'
+ORDER BY Iprice DESC;
+
+To retrieve data from StationaryItemsView, you can simply use:
+SELECT * FROM StationaryItemsView;
+

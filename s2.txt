@@ -1,0 +1,52 @@
+s2
+1)SQL> select c_name from Depositor INTERSECT select c_name from Borrower;
+
+C_NAME
+--------------------
+Raj
+Sonam
+Riya
+Sam
+Ish
+
+2)SQL> select c_name from Depositor UNION select c_name from Borrower;
+
+C_NAME
+--------------------
+Raj
+Sonam
+Riya
+Sam
+Ish
+
+3)SQL> select c_name from Depositor where c_name NOT IN (select c_name from Borrower);
+
+4) 
+SQL> SELECT AVG(balance), b_name
+  2  FROM Account
+  3  WHERE b_name = 'Wadia'
+  4  GROUP BY b_name;
+
+AVG(BALANCE) B_NAM
+------------ -----
+       15000 Wadia
+
+5)SQL> select avg(balance),b_name from Account group by b_name;
+
+AVG(BALANCE) B_NAME
+------------ --------------------
+       15000 Wadia
+        6000 sainagar
+        8000 gaurinagar
+       10000 Alison
+       12000 City Pride
+
+6)SQL> select b_name, count(*) from Account inner join Depositor on Account.acc_no= Depositor.acc_no group by b_name;
+
+B_NAME                 COUNT(*)
+-------------------- ----------
+Wadia                         1
+sainagar                      1
+gaurinagar                    1
+Alison                        1
+City Pride                    1

@@ -1,0 +1,6 @@
+SQL> CREATE TABLE PBorrower (Rollin NUMBER(5) PRIMARY KEY,
+  2      Name VARCHAR2(50),
+  3      DateofIssue DATE,
+  4      NameofBook VARCHAR2(100),
+  5      Status CHAR(1));
+SQL> create table PFine(rollno number(5), fdate DATE ,amt NUMBER);

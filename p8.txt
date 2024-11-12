@@ -1,0 +1,85 @@
+
+Problem Statement:
+Create the library table under a non-SYS schema. 
+Write a Row Level Before and After Trigger on the Library table. The system should keep track of the records 
+that are being updated or deleted. The old value of updated or deleted records should be added in the Library_Audit table.
+
+
+-- SQL Script to create Row-Level Triggers (Before and After) on Library Table
+
+-- 1. BEFORE UPDATE/DELETE Trigger
+CREATE OR REPLACE TRIGGER trglibrary_before
+BEFORE UPDATE OR DELETE ON library
+FOR EACH ROW
+BEGIN
+  -- For Update operation, capturing old values before they are changed
+  IF UPDATING THEN
+    INSERT INTO library_audit
+    (book_id, title, author, edition, no_of_copy, date_of_mod, type_of_operation, user_of_operation)
+    VALUES
+    (:OLD.book_id, :OLD.title, :OLD.author, :OLD.edition, :OLD.no_of_copies, SYSDATE, 'UPDATE_BEFORE', USER);
+  END IF;
+
+  -- For Delete operation, capturing old values before deletion
+  IF DELETING THEN
+    INSERT INTO library_audit
+    (book_id, title, author, edition, no_of_copy, date_of_mod, type_of_operation, user_of_operation)
+    VALUES
+    (:OLD.book_id, :OLD.title, :OLD.author, :OLD.edition, :OLD.no_of_copies, SYSDATE, 'DELETE_BEFORE', USER);
+  END IF;
+END;
+/
+
+-- Explanation:
+-- This is the "Before" trigger that captures the old values of the records before an update or delete operation.
+-- If an "update" occurs, it captures the old data and inserts it into the "library_audit" table.
+-- If a "delete" occurs, it also captures the old values (before deletion) and inserts into the audit table.
+
+-- 2. AFTER UPDATE/DELETE Trigger
+CREATE OR REPLACE TRIGGER trglibrary_after
+AFTER UPDATE OR DELETE ON library
+FOR EACH ROW
+BEGIN
+  -- For Update operation, capturing new values after they are changed
+  IF UPDATING THEN
+    INSERT INTO library_audit
+    (book_id, title, author, edition, no_of_copy, date_of_mod, type_of_operation, user_of_operation)
+    VALUES
+    (:NEW.book_id, :NEW.title, :NEW.author, :NEW.edition, :NEW.no_of_copies, SYSDATE, 'UPDATE_AFTER', USER);
+  END IF;
+
+  -- For Delete operation, capturing new values after deletion (this can be null)
+  IF DELETING THEN
+    INSERT INTO library_audit
+    (book_id, title, author, edition, no_of_copy, date_of_mod, type_of_operation, user_of_operation)
+    VALUES
+    (NULL, NULL, NULL, NULL, NULL, SYSDATE, 'DELETE_AFTER', USER);
+  END IF;
+END;
+/
+
+-- Explanation:
+-- This is the "After" trigger that captures the new values of the records after the update or delete operation.
+-- If an "update" occurs, it captures the new data and inserts it into the "library_audit" table.
+-- If a "delete" occurs, it records the fact that the record has been deleted (with NULL values).
+
+-- 3. Verify Triggers Created
+SELECT trigger_name FROM user_triggers WHERE table_name = 'LIBRARY';
+
+-- 4. Testing Update and Delete:
+-- To test the triggers, you can use the following queries:
+
+-- For Update:
+UPDATE library
+SET no_of_copies = 10
+WHERE book_id = 101;
+
+-- After running the above update, check the library_audit table:
+SELECT * FROM library_audit WHERE book_id = 101;
+
+-- For Delete:
+DELETE FROM library
+WHERE book_id = 101;
+
+-- After running the above delete, check the library_audit table:
+SELECT * FROM library_audit WHERE book_id = 101;

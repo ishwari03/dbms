@@ -1,0 +1,65 @@
+1) SQL> update Employee set city='Banglore' where e_name IN(select e_name from Works where cmp_name='Infosys');
+
+2)SQL> select e_name from Works W1 where salary > (select avg(salary) from Work
+s W2 where W1.cmp_name=W2.cmp_name);
+
+3)
+SQL> select E.e_name, E.street,E.city from Employee E
+  2  JOIN Works W on E.e_name=W.e_name where W.cmp_name='TechM' and salary>10
+000;
+
+E_NAME               STREET                         CITY
+-------------------- ------------------------------ --------------------
+Riya                 Gangadham Rd                   Banglore
+
+4)SQL> alter table Manages RENAME TO Management;
+
+5) 
+SQL> create index simple_idx on Employee(city);
+
+Index created.
+
+unique: create unique index idx_name tb_name(col_name);
+
+6) SQL> select index_name,table_name,uniqueness from USER_INDEXES where table_name='EMPLOYEE';
+
+INDEX_NAME
+--------------------------------------------------------------------------------
+TABLE_NAME
+--------------------------------------------------------------------------------
+UNIQUENES
+---------
+SYS_C008335
+EMPLOYEE
+UNIQUE
+
+E_NAME_UNIQUE
+EMPLOYEE
+UNIQUE
+
+INDEX_NAME
+--------------------------------------------------------------------------------
+TABLE_NAME
+--------------------------------------------------------------------------------
+UNIQUENES
+---------
+
+SIMPLE_IDX
+EMPLOYEE
+NONUNIQUE
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+SQL> select index_name,column_name from USER_IND_COLUMNS where table_name='EMPLOYEE';
+
+INDEX_NAME
+--------------------------------------------------------------------------------
+COLUMN_NAME
+--------------------------------------------------------------------------------
+SYS_C008335
+E_ID
+
+E_NAME_UNIQUE
+E_NAME
+
+SIMPLE_IDX
+CITY

@@ -1,0 +1,213 @@
+db.Employee.insertMany([
+  {
+    "Emp_id": 1001,
+    "Name": { "FName": "John", "LName": "Doe" },
+    "Company Name": "TechCorp",
+    "Salary": 120000,
+    "Designation": "DBA",
+    "Age": 32,
+    "Expertise": ["SQL", "MongoDB", "Database Management"],
+    "DOB": ISODate("1991-03-15"),
+    "Email id": "john.doe@example.com",
+    "Contact": "123-456-7890",
+    "Address": [
+      { "PAddr": "123 Main St", "LAddr": "Cityville" },
+      { "PAddr": "456 Elm St", "LAddr": "Townsville" }
+    ]
+  },
+  {
+    "Emp_id": 1002,
+    "Name": { "FName": "Jane", "LName": "Smith" },
+    "Company Name": "WebSoft",
+    "Salary": 200000,
+    "Designation": "DBA",
+    "Age": 30,
+    "Expertise": ["NoSQL", "MongoDB", "DBA"],
+    "DOB": ISODate("1993-07-20"),
+    "Email id": "jane.smith@example.com",
+    "Contact": "987-654-3210",
+    "Address": [
+      { "PAddr": "789 Oak St", "LAddr": "Lakeside" },
+      { "PAddr": "321 Pine St", "LAddr": "Riverside" }
+    ]
+  },
+  {
+    "Emp_id": 1003,
+    "Name": { "FName": "Swapnil", "LName": "Jadhav" },
+    "Company Name": "TechCorp",
+    "Salary": 180000,
+    "Designation": "Engineer",
+    "Age": 28,
+    "Expertise": ["Python", "MongoDB"],
+    "DOB": ISODate("1995-01-10"),
+    "Email id": "swapnil.jadhav@example.com",
+    "Contact": "555-789-1234",
+    "Address": [
+      { "PAddr": "500 Maple St", "LAddr": "Cityville" },
+      { "PAddr": "700 Cedar St", "LAddr": "Uptown" }
+    ]
+  },
+  {
+    "Emp_id": 1004,
+    "Name": { "FName": "Amit", "LName": "Patel" },
+    "Company Name": "WebSoft",
+    "Salary": 250000,
+    "Designation": "DBA",
+    "Age": 34,
+    "Expertise": ["MySQL", "MongoDB", "DBA"],
+    "DOB": ISODate("1989-05-05"),
+    "Email id": "amit.patel@example.com",
+    "Contact": "666-432-9876",
+    "Address": [
+      { "PAddr": "123 Elm St", "LAddr": "Woodland" },
+      { "PAddr": "900 Birch St", "LAddr": "Hillside" }
+    ]
+  },
+  {
+    "Emp_id": 1005,
+    "Name": { "FName": "Emily", "LName": "White" },
+    "Company Name": "TechCorp",
+    "Salary": 220000,
+    "Designation": "Manager",
+    "Age": 40,
+    "Expertise": ["Leadership", "Project Management"],
+    "DOB": ISODate("1983-11-15"),
+    "Email id": "emily.white@example.com",
+    "Contact": "888-555-1234",
+    "Address": [
+      { "PAddr": "100 Pine St", "LAddr": "Mountainview" },
+      { "PAddr": "400 Oak St", "LAddr": "Seaside" }
+    ]
+  }
+]);
+
+1)
+m4> db.Employee.aggregate([
+... {$group: {_id:"$Designation",totalSalary:{$sum:"$Salary"}}}]);
+[
+  { _id: 'Engineer', totalSalary: 180000 },
+  { _id: 'Manager', totalSalary: 220000 },
+  { _id: 'DBA', totalSalary: 570000 }
+]
+
+2)m4> db.Employee.aggregate([
+...   {
+...     $project: {
+...       _id: 1,
+...       Name: {
+...         FName: { $toUpper: "$Name.FName" },
+...         LName: { $toUpper: "$Name.LName" }
+...       }
+...     }
+...   },
+...   { $sort: { "Name.FName": 1, "Name.LName": 1 } }
+... ]);
+[
+  {
+    _id: ObjectId('673217c8fbb937c89e0d8193'),
+    Name: { FName: 'AMIT', LName: 'PATEL' }
+  },
+  {
+    _id: ObjectId('673217c8fbb937c89e0d8194'),
+    Name: { FName: 'EMILY', LName: 'WHITE' }
+  },
+  {
+    _id: ObjectId('673217c8fbb937c89e0d8191'),
+    Name: { FName: 'JANE', LName: 'SMITH' }
+  },
+  {
+    _id: ObjectId('673217c8fbb937c89e0d8190'),
+    Name: { FName: 'JOHN', LName: 'DOE' }
+  },
+  {
+    _id: ObjectId('673217c8fbb937c89e0d8192'),
+    Name: { FName: 'SWAPNIL', LName: 'JADHAV' }
+  }
+]
+
+3)m4> db.Employee.aggregate([
+...   { $match: { "Designation": "DBA" } },
+...   { $unwind: "$Address" },
+...   {
+...     $group: {
+...       _id: "$Address.LAddr",
+...       totalSalary: { $sum: "$Salary" }
+...     }
+...   }
+... ]);
+[
+  { _id: 'Riverside', totalSalary: 200000 },
+  { _id: 'Woodland', totalSalary: 250000 },
+  { _id: 'Lakeside', totalSalary: 200000 },
+  { _id: 'Hillside', totalSalary: 250000 },
+  { _id: 'Cityville', totalSalary: 120000 },
+  { _id: 'Townsville', totalSalary: 120000 }
+]
+
+4, 5, 7)
+m4> db.Employee.createIndex({ "Designation": 1 });
+Designation_1
+m4> db.Employee.createIndex({ "Expertise": 1 });
+Expertise_1
+m4> db.Employee.getIndexes();
+[
+  { v: 2, key: { _id: 1 }, name: '_id_' },
+  { v: 2, key: { Designation: 1 }, name: 'Designation_1' },
+  { v: 2, key: { Expertise: 1 }, name: 'Expertise_1' }
+]
+
+6)m4> var start = new Date();
+
+m4> db.Employee.find({ "Emp_id": 1001 }).pretty();
+[
+  {
+    _id: ObjectId('673217c8fbb937c89e0d8190'),
+    Emp_id: 1001,
+    Name: { FName: 'John', LName: 'Doe' },
+    'Company Name': 'TechCorp',
+    Salary: 120000,
+    Designation: 'DBA',
+    Age: 32,
+    Expertise: [ 'SQL', 'MongoDB', 'Database Management' ],
+    DOB: ISODate('1991-03-15T00:00:00.000Z'),
+    'Email id': 'john.doe@example.com',
+    Contact: '123-456-7890',
+    Address: [
+      { PAddr: '123 Main St', LAddr: 'Cityville' },
+      { PAddr: '456 Elm St', LAddr: 'Townsville' }
+    ]
+  }
+]
+m4> var end = new Date();
+
+m4> print("Time before index: " + (end - start) + "ms");
+Time before index: 102ms
+
+m4> db.Employee.createIndex({ "Emp_id": 1 });
+Emp_id_1
+m4> var start = new Date();
+
+m4> db.Employee.find({ "Emp_id": 1001 }).pretty();
+[
+  {
+    _id: ObjectId('673217c8fbb937c89e0d8190'),
+    Emp_id: 1001,
+    Name: { FName: 'John', LName: 'Doe' },
+    'Company Name': 'TechCorp',
+    Salary: 120000,
+    Designation: 'DBA',
+    Age: 32,
+    Expertise: [ 'SQL', 'MongoDB', 'Database Management' ],
+    DOB: ISODate('1991-03-15T00:00:00.000Z'),
+    'Email id': 'john.doe@example.com',
+    Contact: '123-456-7890',
+    Address: [
+      { PAddr: '123 Main St', LAddr: 'Cityville' },
+      { PAddr: '456 Elm St', LAddr: 'Townsville' }
+    ]
+  }
+]
+m4> var end = new Date();
+
+m4> print("Time after index: " + (end - start) + "ms");
+Time after index: 110ms 

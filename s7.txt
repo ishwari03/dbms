@@ -1,0 +1,127 @@
+1)SQL> create view View_1 as
+  2  select c_name from Borrower INNER JOIN Loan on Borrower.loan_no=Loan.loan_no where b_name='Wadia'
+  3  order by c_name;
+
+View created.
+
+SQL> select * from View_1;
+
+C_NAME
+--------------------
+Raj
+
+2)SQL> create view View_2 as
+  2  select b_name,b_city from Branch;
+
+View created.
+
+SQL> select * from View_2;
+
+B_NAME               B_CITY
+-------------------- --------------------
+Wadia                Pune
+sainagar             Amravati
+gaurinagar           Mumbai
+Alison               Kharadi
+City Pride           Akola
+
+OPERATIONS:
+	SQL> insert into View_2 values ('Yerwada','Pune');
+
+1 row created.
+
+SQL> update View_2 set b_name='Radison' where b_name='Yerwada';
+
+1 row updated.
+
+SQL> select* from View_2;
+
+B_NAME               B_CITY
+-------------------- --------------------
+Wadia                Pune
+sainagar             Amravati
+gaurinagar           Mumbai
+Alison               Kharadi
+City Pride           Akola
+Radison              Pune
+
+6 rows selected.
+
+SQL> delete from View_2 where b_name='Radison';
+
+1 row deleted.
+
+SQL> select * from View_2;
+
+B_NAME               B_CITY
+-------------------- --------------------
+Wadia                Pune
+sainagar             Amravati
+gaurinagar           Mumbai
+Alison               Kharadi
+City Pride           Akola
+
+3)CREATE VIEW View_3 AS
+SELECT Borrower.c_name, Depositor.acc_no
+FROM Borrower JOIN Depositor ON Borrower.c_name = Depositor.c_name;
+SQL> select * from View_3;
+
+C_NAME                   ACC_NO
+-------------------- ----------
+Raj                         101
+Sonam                       102
+Riya                        103
+Sam                         104
+Ish                         105
+
+We cannot do operations directly since foreign key constraint.
+s
+4)
+SQL> SELECT D.c_name
+  2  FROM Depositor D
+  3  LEFT JOIN Borrower B ON D.c_name = B.c_name
+  4  UNION
+  5  SELECT B.c_name
+  6  FROM Borrower B
+  7  RIGHT JOIN Depositor D ON B.c_name = D.c_name;
+
+C_NAME
+--------------------
+Raj
+Sonam
+Riya
+Sam
+Ish
+
+5)simple: SQL> create index idx1 on Account(balance);
+
+Index created.
+unique: SQL> create unique index indx2 on Branch(b_name);
+6) SP2-0158: unknown SHOW option "Customer"
+SQL> SELECT index_name, index_type, uniqueness
+  2  FROM USER_INDEXES
+  3  WHERE table_name = 'CUSTOMER';
+
+INDEX_NAME
+--------------------------------------------------------------------------------
+INDEX_TYPE                  UNIQUENES
+--------------------------- ---------
+SYS_C008317
+NORMAL                      UNIQUE
+
+
+SQL> SELECT index_name, column_name, column_position
+  2  FROM USER_IND_COLUMNS
+  3  WHERE table_name = 'CUSTOMER'
+  4  ORDER BY index_name, column_position;
+
+INDEX_NAME
+--------------------------------------------------------------------------------
+COLUMN_NAME
+--------------------------------------------------------------------------------
+COLUMN_POSITION
+---------------
+SYS_C008317
+C_NAME
+              
+7)

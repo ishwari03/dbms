@@ -1,0 +1,165 @@
+CREATE TABLE Companies(comp_id varchar(50), name varchar(50), cost int, year int);
+CREATE TABLE order_tb(comp_id varchar(50), domain varchar(50), quantity int);
+
+SQL> INSERT INTO Companies (comp_id, name, cost, year) VALUES
+   ('C001', 'ONGC', 2000, 2010);
+
+1 row created.
+
+SQL> INSERT INTO Companies (comp_id, name, cost, year) VALUES
+    ('C002', 'HPCL', 2500, 2012);
+
+1 row created.
+
+SQL> INSERT INTO Companies (comp_id, name, cost, year) VALUES
+    ('C005', 'IOCL', 1000, 2014);
+
+1 row created.
+
+SQL> INSERT INTO Companies (comp_id, name, cost, year) VALUES
+   ('C006', 'BHEL', 3000, 2015);
+
+SQL> INSERT INTO order_tb (comp_id, domain, quantity) VALUES ('C001', 'Oil',
+ 109);
+
+1 row created.
+
+SQL> INSERT INTO order_tb (comp_id, domain, quantity) VALUES ('C002', 'Gas',
+ 121);
+
+1 row created.
+
+SQL> INSERT INTO order_tb (comp_id, domain, quantity) VALUES ('C005', 'Telec
+om', 115);
+
+1 row created.
+
+1) 
+SQL> select name,cost,domain,quantity from Companies INNER JOIN order_tb on
+Companies.comp_id=order_tb.comp_id;
+
+NAME                                                     COST
+-------------------------------------------------- ----------
+DOMAIN                                               QUANTITY
+-------------------------------------------------- ----------
+ONGC                                                     2000
+Oil                                                       109
+
+HPCL                                                     2500
+Gas                                                       121
+
+IOCL                                                     1000
+Telecom                                                   115
+
+2)SQL> select name,cost,domain,quantity from Companies LEFT OUTER JOIN order_t
+b on Companies.comp_id=order_tb.comp_id;
+
+NAME                                                     COST
+-------------------------------------------------- ----------
+DOMAIN                                               QUANTITY
+-------------------------------------------------- ----------
+ONGC                                                     2000
+Oil                                                       109
+
+HPCL                                                     2500
+Gas                                                       121
+
+IOCL                                                     1000
+Telecom                                                   115
+
+
+NAME                                                     COST
+-------------------------------------------------- ----------
+DOMAIN                                               QUANTITY
+-------------------------------------------------- ----------
+BHEL                                                     3000
+
+3)SQL> select name,cost,domain,quantity from Companies RIGHT OUTER JOIN order_tb on Companies.comp_id=order_tb.comp_id;
+
+NAME                                                     COST
+-------------------------------------------------- ----------
+DOMAIN                                               QUANTITY
+-------------------------------------------------- ----------
+ONGC                                                     2000
+Oil                                                       109
+
+HPCL                                                     2500
+Gas                                                       121
+
+IOCL                                                     1000
+Telecom                                                   115
+
+4)SQL> select name,cost from Companies UNION select domain, quantity from orde
+r_tb;
+
+NAME                                                     COST
+-------------------------------------------------- ----------
+ONGC                                                     2000
+HPCL                                                     2500
+IOCL                                                     1000
+BHEL                                                     3000
+Oil                                                       109
+Gas                                                       121
+Telecom                                                   115
+
+7 rows selected.
+
+5)
+SQL> create view s8_view as select name,quantity from Companies JOIN order_tb on Companies.comp_id= order_tb.comp_id;
+
+View created.
+
+SQL> select * from s8_view;
+
+NAME                                                 QUANTITY
+-------------------------------------------------- ----------
+ONGC                                                      109
+HPCL                                                      121
+IOCL                                                      115
+
+6)SQL> create view s8_view2 as select name,cost from Companies;
+
+View created.
+
+SQL> select * from s8_view2;
+
+NAME                                                     COST
+-------------------------------------------------- ----------
+ONGC                                                     2000
+HPCL                                                     2500
+IOCL                                                     1000
+BHEL                                                     3000
+
+SQL> insert into s8_view2 values('BCCA',4000);
+
+1 row created.
+
+SQL> update s8_view2 set cost = 3500 where name='IOCL';
+
+1 row updated.
+
+SQL> insert into s8_view2 values('BCTA',5000);
+
+1 row created.
+
+SQL> delete from s8_view2 where name='BCTA';
+
+1 row deleted.
+
+8)SQL> select * from s8_view;
+
+NAME                                                 QUANTITY
+-------------------------------------------------- ----------
+ONGC                                                      109
+HPCL                                                      121
+IOCL                                                      115
+
+SQL> select * from s8_view2;
+
+NAME                                                     COST
+-------------------------------------------------- ----------
+ONGC                                                     2000
+HPCL                                                     2500
+IOCL                                                     3500
+BHEL                                                     3000
+BCCA                                                     4000

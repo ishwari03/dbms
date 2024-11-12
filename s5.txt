@@ -1,0 +1,99 @@
+SQL> create table Employee (e_id number(10) primary key, e_name varchar2(20
+) not null, street varchar2(30), city varchar2(20));
+
+SQL> create table Company( cmp_name varchar2(20) primary key, city varchar2(20));
+
+SQL> Alter table Employee add constraint e_name_unique unique (e_name);
+SQL> Alter table Company modify city varchar2(20) not null;
+
+SQL> create table Works (e_name varchar2(20) not null, cmp_name varchar2(20)
+not null, salary number(10,2), primary key(e_name,cmp_name), foreign key(e_na
+me) references Employee(e_name), foreign key(cmp_name) references Company(cmp
+_name));
+
+SQL> create table Manages(e_name varchar2(20) not null, mng_name varchar2(20)
+not null, primary key(e_name,mng_name), foreign key (e_name) references Emplo
+yee(e_name), foreign key (mng_name) references Employee(e_name));
+
+SQL> INSERT INTO Employee VALUES (1001,'John', 'Hadapsar Rd', 'Pune');
+
+1 row created.
+
+SQL> INSERT INTO Employee VALUES (1002,'Sam', 'Gandhi Rd', 'Akola');
+
+1 row created.
+
+SQL> INSERT INTO Employee VALUES (1003,'Riya', 'Gangadham Rd', 'Akot');
+
+1 row created.
+
+SQL> INSERT INTO Employee VALUES (1004,'Siya', 'Gangadhar Rd', 'Delhi');
+
+SQL> INSERT INTO Company (cmp_name, city)
+    VALUES ('TCS', 'Mumbai');
+SQL> INSERT INTO Company (cmp_name, city)
+    VALUES ('TATA', 'Pune');
+
+SQL> INSERT INTO Company (cmp_name, city)
+    VALUES ('TechM', 'Akola');
+SQL> INSERT INTO Company (cmp_name, city)
+    VALUES ('Infosys', 'Akot');
+
+INSERT INTO Works (e_name, cmp_name, salary)
+VALUES ('John', 'TCS', 50000);
+
+INSERT INTO Works (e_name, cmp_name, salary)
+VALUES ('Sam', 'TATA', 55000);
+
+INSERT INTO Works (e_name, cmp_name, salary)
+VALUES ('Riya', 'TechM', 60000);
+
+INSERT INTO Works (e_name, cmp_name, salary)
+VALUES ('Siya', 'Infosys', 65000);
+
+SQL> INSERT INTO Manages (e_name, mng_name)
+   VALUES ('Sam', 'John');
+
+1 row created.
+
+SQL> INSERT INTO Manages (e_name, mng_name)
+    VALUES ('Riya', 'Sam');
+
+1 row created.
+
+SQL> INSERT INTO Manages (e_name, mng_name)
+   VALUES ('Riya', 'Siya');
+
+1 row created.
+
+SQL> INSERT INTO Manages (e_name, mng_name)
+   VALUES ('Sam', 'Siya');
+
+1) SQL> select e_name from Works where cmp_name='TCS';
+
+E_NAME
+--------------------
+John
+2)SQL> select e_name, cmp_name from Works order by cmp_name ASC , e_name DESC;
+
+E_NAME               CMP_NAME
+-------------------- --------------------
+Siya                 Infosys
+Sam                  TATA
+John                 TCS
+Riya                 TechM
+3)(not yet confirm) 
+	SQL> update Employee set city='Banglore' where e_id IN (select e_id from Works where cmp_name='Infosys');
+
+4 rows updated.
+4) 
+SQL> select E.e_name, E.street, E.city from Employee E join Works W on E.e_na
+me=W.e_name where W.cmp_name='TechM' and W.salary>10000;
+
+E_NAME               STREET                         CITY
+-------------------- ------------------------------ --------------------
+Riya                 Gangadham Rd                   Banglore
+
+5)SQL> alter table Company add asset number;
+
+Table altered.

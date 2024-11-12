@@ -1,0 +1,28 @@
+
+SQL> create table Area(radius NUMBER(5), area NUMBER(10,2));
+
+Table created.
+
+SQL> DECLARE
+  2  r NUMBER(5);
+  3  a NUMBER(10,2);
+  4  pi CONSTANT NUMBER:= 3.14159;
+  5  BEGIN
+  6     FOR r IN 5..9 LOOP
+  7     a:= pi*r*r;
+  8     INSERT INTO Area(radius ,area) VALUES (r,a);
+  9     END LOOP;
+ 10  END;
+ 11  /
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from Area;
+
+    RADIUS       AREA
+---------- ----------
+         5      78.54
+         6      113.1
+         7     153.94
+         8     201.06
+         9     254.47
