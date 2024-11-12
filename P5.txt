@@ -1,0 +1,42 @@
+create table emp 
+(
+  emp_no number primary key,
+  salary number
+);
+
+insert into emp values(1,10000);
+insert into emp values(2,20000);
+insert into emp values(3,30000);
+
+create table increment_salary
+(
+  emp_no number primary key,
+  salary number
+);
+
+declare
+  v_avg_salary number;
+  
+begin
+
+  select avg(salary) into v_avg_salary from emp;
+  dbms_output.put_line('Average salary :'||v_avg_salary);
+  
+  for emp_rec in (select emp_no , salary from emp where salary < v_avg_salary) loop
+  dbms_output.put_line('Processing no '||emp_rec.emp_no||'salary '||emp_rec.salary);
+  
+  update emp
+  set salary=emp_rec.salary*1.1
+  where emp_no=emp_rec.emp_no;
+  
+  insert into increment_salary(emp_no , salary)
+  values(emp_rec.emp_no , emp_rec.salary);
+  
+  end loop;
+  
+end;
+/
+
+select * from emp;
+select * from increment_salary;
+SELECT AVG(salary) FROM emp;
