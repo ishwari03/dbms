@@ -1,0 +1,51 @@
+create table emp(
+    emp_no int primary key,
+    emp_name varchar(10),
+    emp_salary int
+);
+
+insert into emp values(1,'monali',45000);
+insert into emp values(2,'karan',48000);
+insert into emp values(3,'arjun',85000);
+insert into emp values (4, 'ajay', 40000);
+
+create table tracking(
+    emp_no int,
+    emp_salary int
+);
+
+create or replace trigger t1_insert
+after insert on emp
+for each row
+begin
+    if :new.emp_salary < 50000 then
+        insert into tracking values(:new.emp_no, :new.emp_salary);
+    end if;
+end;
+/
+
+create or replace trigger t1_update
+after update on emp
+for each row
+begin
+    if :new.emp_salary < 50000 then
+        insert into tracking values(:new.emp_no, :new.emp_salary);
+    end if;
+end;
+/
+
+
+select * from emp;
+
+select * from tracking;
+
+update emp
+set emp_salary = 35000
+where emp_no = 1;
+
+update emp
+set emp_salary=45000
+where emp_no=3;
+
+select * from tracking;
+
